@@ -16,6 +16,7 @@ exports.saveCarMobilities = async (data) => {
         await model.save();
         DateValue = model;
     }
+    if(data.length > 2){
     await data.map(async(element)=> {
         var Car = await CarEntity.findOne({plaka: element.plate});
         if(Car)
@@ -44,5 +45,6 @@ exports.saveCarMobilities = async (data) => {
         }
     }
     })
+}
     return true;
 }

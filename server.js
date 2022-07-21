@@ -36,17 +36,7 @@ const CarMobilityFunction = require("./functions/saveCarMobilitiesFunction");
 io.on("connection", (socket) => {
   console.log("User Connected ", socket.id);
 
-  setInterval(async function () {
-    const data = await getCarData();
-    await CarMobilityFunction.saveCarMobilities(data);
-  }, 30000);
-
   socket.on("callApi_map_car", async () => {
-    const data = await getCarData();
-    socket.emit("listen_car_map", data);
-  });
-
-  async function getCarData(){
     var xmls =
       '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:web="http://webservice.com/">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <web:PLITR1>\n                <a1>sercair</a1>\n                <a2>blink2014</a2>\n                <a3>213444</a3>\n                <o1>json</o1>\n      </web:PLITR1>\n   </soapenv:Body>\n</soapenv:Envelope>';
     var config = {
@@ -63,20 +53,21 @@ io.on("connection", (socket) => {
       },
       data: xmls,
     };
-    return await axios(config)
+    axios(config)
       .then(async function (response) {
-        const res = await JSON.parse(
+        const res = JSON.parse(
           convert.xml2json(response.data, { compact: true, spaces: 2 })
         );
         const data = await res["soap:Envelope"]["soap:Body"][
           "ns2:PLITR1Response"
         ].return._text;
-        return await JSON.parse(data);
+        JSON.parse(data).length > 2 && socket.emit("listen_car_map", JSON.parse(data))
+        
       })
       .catch(function (err) {
         console.log("verihata", err);
       });
-  }
+  });
 
   socket.on("create_room", async (data) => {
     const model = new ChatRoomEntity({
