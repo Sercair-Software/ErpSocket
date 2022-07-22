@@ -36,7 +36,7 @@ const CarMobilityFunction = require("./functions/saveCarMobilitiesFunction");
 io.on("connection", (socket) => {
   console.log("User Connected ", socket.id);
 
-  setInterval(async()=>{
+  setInterval(async function(){
     // todo , When I tried to make a function the API Request code to use it at here and on socket ('callApi_map_car'), but it didn't work well. Maybe try after again. !!! 
     var xmls =
       '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:web="http://webservice.com/">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <web:PLITR1>\n                <a1>sercair</a1>\n                <a2>blink2014</a2>\n                <a3>213444</a3>\n                <o1>json</o1>\n      </web:PLITR1>\n   </soapenv:Body>\n</soapenv:Envelope>';
@@ -63,12 +63,12 @@ io.on("connection", (socket) => {
           "ns2:PLITR1Response"
         ].return._text;
         const realData = JSON.parse(data);
-        realData.length > 0 ? await CarMobilityFunction.saveCarMobilities(realData) : console.log("Hata Oluştu. Hatalı Data: " + data + ", Tarih: "+ new Date())
+        realData.length > 0 ? await CarMobilityFunction.saveCarMobilities(realData) : console.log("Hata Oluştu. Hatalı Data: " + data + ", Tarih: "+ new Date().toLocaleDateString())
       })
       .catch(function (err) {
         console.log("verihata", err);
       });
-  }, 30000)
+  }, 30000, 1)
 
   socket.on("callApi_map_car", async () => {
     var xmls =
