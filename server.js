@@ -36,6 +36,40 @@ const CarMobilityFunction = require("./functions/saveCarMobilitiesFunction");
 io.on("connection", (socket) => {
   console.log("User Connected ", socket.id);
 
+  setInterval(async()=>{
+    // todo , When I tried to make a function the API Request code to use it at here and on socket ('callApi_map_car'), but it didn't work well. Maybe try after again. !!! 
+    var xmls =
+      '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:web="http://webservice.com/">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <web:PLITR1>\n                <a1>sercair</a1>\n                <a2>blink2014</a2>\n                <a3>213444</a3>\n                <o1>json</o1>\n      </web:PLITR1>\n   </soapenv:Body>\n</soapenv:Envelope>';
+    var config = {
+      method: "post",
+      url: "http://37.75.11.73:80/Service724/track724WS",
+      headers: {
+        "Access-Control-Allow-Origin": "",
+        "Access-Control-Allow-Methods":
+          "GET, POST, PUT, PATCH, POST, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "Origin, Content-Type, X-Auth-Token",
+        "Content-Type": "text/xml; charset=utf-8",
+        Cookie:
+          "FGTServer=94295B2F3C8A09563B8E86D4B0F2A2FC9F6C8C76D04B4426FBAE6A81F015BFB287C7",
+      },
+      data: xmls,
+    };
+    axios(config)
+      .then(async function (response) {
+        const res = JSON.parse(
+          convert.xml2json(response.data, { compact: true, spaces: 2 })
+        );
+        const data = await res["soap:Envelope"]["soap:Body"][
+          "ns2:PLITR1Response"
+        ].return._text;
+        const realData = JSON.parse(data);
+        realData.length > 0 ? await CarMobilityFunction.saveCarMobilities(realData) : console.log("Hata Oluştu. Hatalı Data: " + realData + ", Tarih: "+ new Date())
+      })
+      .catch(function (err) {
+        console.log("verihata", err);
+      });
+  }, 30000)
+
   socket.on("callApi_map_car", async () => {
     var xmls =
       '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:web="http://webservice.com/">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <web:PLITR1>\n                <a1>sercair</a1>\n                <a2>blink2014</a2>\n                <a3>213444</a3>\n                <o1>json</o1>\n      </web:PLITR1>\n   </soapenv:Body>\n</soapenv:Envelope>';
@@ -61,8 +95,8 @@ io.on("connection", (socket) => {
         const data = await res["soap:Envelope"]["soap:Body"][
           "ns2:PLITR1Response"
         ].return._text;
-        JSON.parse(data).length > 2 && socket.emit("listen_car_map", JSON.parse(data))
-        
+        const realData = JSON.parse(data);
+        realData.length > 0 && socket.emit("listen_car_map", realData)
       })
       .catch(function (err) {
         console.log("verihata", err);

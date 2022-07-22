@@ -5,6 +5,7 @@ const DateEntity = require('../entities/date')
 const { default: mongoose } = require('mongoose')
 
 exports.saveCarMobilities = async (data) => {
+    if(data.length > 0 && data.deviceId){ //Control.
     var today = new Date();
     var date = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 3)
     //Check Date. If not exists, create today's Date.
@@ -16,7 +17,6 @@ exports.saveCarMobilities = async (data) => {
         await model.save();
         DateValue = model;
     }
-    if(data.length > 2){
     await data.map(async(element)=> {
         var Car = await CarEntity.findOne({plaka: element.plate});
         if(Car)
@@ -37,7 +37,7 @@ exports.saveCarMobilities = async (data) => {
         }
         var LastRecordOfCarMobility = await CarMobilityEntity.findOne({CarId: mongoose.Types.ObjectId(Car._id)})
             .sort({_id:-1})
-        if((!LastRecordOfCarMobility || (LastRecordOfCarMobility &&( LastRecordOfCarMobility.latitude != element.latitude || LastRecordOfCarMobility.longitude != element.longitude) ))){
+        if((!LastRecordOfCarMobility || (LastRecordOfCarMobility && (LastRecordOfCarMobility.latitude != element.latitude || LastRecordOfCarMobility.longitude != element.longitude)))){
             var mobilityEntity = await new CarMobilityEntity(element);
             mobilityEntity.CarId= mongoose.Types.ObjectId(Car._id);
             mobilityEntity.DatesId= mongoose.Types.ObjectId(DateValue._id);
@@ -45,6 +45,9 @@ exports.saveCarMobilities = async (data) => {
         }
     }
     })
-}
+    console.log("Araç Takip Dataları Başarıyla Kaydedildi. Tarih: "+ today)
     return true;
+}
+console.log("Araç Takip Dataları Kaydedilirken Hata Oluştu. Hatalı Data: " + data + " , Tarih: "+ today)
+return false;
 }
