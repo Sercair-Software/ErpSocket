@@ -63,7 +63,7 @@ io.on("connection", (socket) => {
           "ns2:PLITR1Response"
         ].return._text;
         const realData = JSON.parse(data);
-        realData.length > 0 ? await CarMobilityFunction.saveCarMobilities(realData) : console.log("Hata Oluştu. Hatalı Data: " + realData + ", Tarih: "+ new Date())
+        realData.length > 0 ? await CarMobilityFunction.saveCarMobilities(realData) : console.log("Hata Oluştu. Hatalı Data: " + data + ", Tarih: "+ new Date())
       })
       .catch(function (err) {
         console.log("verihata", err);
