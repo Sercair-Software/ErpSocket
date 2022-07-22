@@ -5,7 +5,7 @@ const DateEntity = require('../entities/date')
 const { default: mongoose } = require('mongoose')
 
 exports.saveCarMobilities = async (data) => {
-    if(data.length > 0 && data.deviceId){ //Control.
+    if(data.length > 0 && data[0].deviceId){ //Control.
     var today = new Date();
     var date = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 3)
     //Check Date. If not exists, create today's Date.
