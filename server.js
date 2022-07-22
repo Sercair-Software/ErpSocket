@@ -38,7 +38,7 @@ io.on("connection", (socket) => {
   const doEveryMinute = () => {
     setTimeout(()=> {
       //I added setTimeout here to run setInterval for 1 time at each 30 seconds. Without setTimeout, it renders setInterval for many Times(mostly 7) at each times. So, it solved problem.
-      setInterval(async () => {
+      let interval = setInterval(async () => {
       // todo , When I tried to make a function the API Request code to use it at here and on socket ('callApi_map_car'), but it didn't work well. Maybe try after again. !!! 
       var xmls =
         '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:web="http://webservice.com/">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <web:PLITR1>\n                <a1>sercair</a1>\n                <a2>blink2014</a2>\n                <a3>213444</a3>\n                <o1>json</o1>\n      </web:PLITR1>\n   </soapenv:Body>\n</soapenv:Envelope>';
@@ -71,7 +71,7 @@ io.on("connection", (socket) => {
         .catch(function (err) {
           console.log("verihata", err);
         });
-    }, 30000)
+    }, 10000)
     }, 1000)// this minute doesn't effect. So I declared it 1 second.
   }
   doEveryMinute();
