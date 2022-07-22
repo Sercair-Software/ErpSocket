@@ -35,7 +35,7 @@ const convert = require("xml-js");
 const CarMobilityFunction = require("./functions/saveCarMobilitiesFunction");
 io.on("connection", (socket) => {
 
-  const doEveryMinute = () => {
+  const doEveryMinute = async() => {
     setTimeout(()=> {
       //I added setTimeout here to run setInterval for 1 time at each 30 seconds. Without setTimeout, it renders setInterval for many Times(mostly 7) at each times. So, it solved problem.
       let interval = setInterval(async () => {
@@ -65,14 +65,13 @@ io.on("connection", (socket) => {
             "ns2:PLITR1Response"
           ].return._text;
           const realData = JSON.parse(data);
-          console.log(data)
           realData.length > 0 ? await CarMobilityFunction.saveCarMobilities(realData) : console.log("Hata Oluştu. Hatalı Data: " + data + ", Tarih: "+ new Date())
         })
         .catch(function (err) {
           console.log("verihata", err);
         });
-    }, 10000)
-    }, 1000)// this minute doesn't effect. So I declared it 1 second.
+    }, 30000)
+    }, 10000)// this minute doesn't effect. So I declared it 1 second.
   }
   doEveryMinute();
   
