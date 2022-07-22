@@ -68,7 +68,7 @@ io.on("connection", (socket) => {
       .catch(function (err) {
         console.log("verihata", err);
       });
-  }, 60000)
+  }, 20000)
 
   socket.on("callApi_map_car", async () => {
     var xmls =
